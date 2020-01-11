@@ -1,14 +1,66 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '@/views/home/index.vue'
+const Layout = () => import('@/views/layout') // 一级路由
+const Home = () => import('@/views/home') // 二级路由
+const Qusetion = () => import('@/views/question')// 二级路由
+const Video = () => import('@/views/video')// 二级路由
+const User = () => import('@/views/user')// 二级路由
+const Profile = () => import('@/views/user/profile') // 一级路由
+const Chat = () => import('@/views/user/chat') // 一级路由
+const Login = () => import('@/views/login') // 一级路由
+const Search = () => import('@/views/search') // 一级路由
+const Result = () => import('@/views/search/result') // 一级路由
+const Article = () => import('@/views/article') // 一级路由
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: Home
+    name: 'layout',
+    component: Layout,
+    children: [
+      {
+        path: '/',
+        component: Home
+      },
+      {
+        path: '/question',
+        component: Qusetion
+      },
+      {
+        path: '/video',
+        component: Video
+      },
+      {
+        path: '/user',
+        component: User
+      }
+    ]
+  },
+  {
+    path: '/user/profile',
+    component: Profile
+  },
+  {
+    path: '/user/chat',
+    component: Chat
+  },
+  {
+    path: '/login',
+    component: Login
+  },
+  {
+    path: '/search',
+    component: Search
+  },
+  {
+    path: '/search/result',
+    component: Result
+  },
+  {
+    path: '/article',
+    component: Article
   }
   // {
   //   path: '/about',

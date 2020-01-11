@@ -1,10 +1,10 @@
 <template>
-  <div>布局</div>
+  <div>小智同学</div>
 </template>
 
 <script>
 export default {
-  name: 'layout'
+  name: 'chat'
 }
 </script>
 

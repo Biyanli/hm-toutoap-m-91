@@ -1,10 +1,10 @@
 <template>
-  <div>布局</div>
+  <div>搜索结果</div>
 </template>
 
 <script>
 export default {
-  name: 'layout'
+  name: 'result'
 }
 </script>
 
