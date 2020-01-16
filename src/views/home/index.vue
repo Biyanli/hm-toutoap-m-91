@@ -2,12 +2,8 @@
   <div class="container">
     <van-tabs v-model="activeIndex" swipeable>
       <van-tab :title="'标签' + item" v-for="item in 10" :key="item">
-        <!--这里注意 这个div设置了滚动条 目的是给后面做阅读记忆 留下伏笔  -->
-        <div class="scroll-wrapper">
-          <van-cell-group>
-            <van-cell v-for="obj in 20" :key="obj" :title="item"></van-cell>
-          </van-cell-group>
-        </div>
+        <!-- 因为一个tab标签对应一个article-list组件 -->
+        <article-list></article-list>
       </van-tab>
     </van-tabs>
     <span class="bar_btn">
@@ -17,12 +13,16 @@
 </template>
 
 <script>
+import ArticleList from './components/article-list'
 export default {
   name: 'home', // devtools里面可以看到name组件里面的名称
   data () {
     return {
       activeIndex: 0
     }
+  },
+  components: {
+    ArticleList
   }
 }
 </script>
