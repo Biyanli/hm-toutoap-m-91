@@ -13,7 +13,7 @@ export default new Vuex.Store({
     // payload载荷中携带user
     updateUser (state, payload) {
       state.user = payload.user // 更新数据
-      auth.setUser() // 将数据同步设置到本地存储中
+      auth.setUser(payload.user) // 将数据同步设置到本地存储中
     },
     // 清除数据
     clearUser (state) {
