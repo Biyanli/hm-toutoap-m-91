@@ -3,7 +3,7 @@
     <van-tabs v-model="activeIndex" swipeable>
       <van-tab :title="channel.name" v-for="channel in channels" :key="channel.id">
         <!-- 因为一个tab标签对应一个article-list组件 -->
-        <article-list></article-list>
+        <article-list :channel_id="channel_id"></article-list>
       </van-tab>
     </van-tabs>
     <span class="bar_btn">
@@ -19,6 +19,7 @@ export default {
   name: 'home', // devtools里面可以看到name组件里面的名称
   data () {
     return {
+      channel_id: 0,
       activeIndex: 0,
       channels: [] // 声明接收频道的数据
     }
