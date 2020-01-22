@@ -88,14 +88,34 @@ export default {
       }
     },
     // 下拉刷新方法
-    onRefresh () {
-      console.log('下拉刷新加载')
-      setTimeout(() => {
-        let arr = Array.from(Array(10), (value, index) => '追加' + (index + 1))
-        this.articles.unshift(...arr)
-        this.downLoading = false // 关闭状态
-        this.refreshSuccessText = `更新了${arr.length}条数据`
-      }, 1000)
+    async onRefresh () {
+      // console.log('下拉刷新加载')
+      // setTimeout(() => {
+      //   let arr = Array.from(Array(10), (value, index) => '追加' + (index + 1))
+      //   this.articles.unshift(...arr)
+      //   this.downLoading = false // 关闭状态
+      //   this.refreshSuccessText = `更新了${arr.length}条数据`
+      // }, 1000)
+      // 下拉刷新永远拉取最新的数据
+      const data = await getArticle({
+        channel_id: this.channel_id,
+        timestamp: Date.now()
+      })
+      this.downLoading = false // 关掉下拉状态
+      // 有可能没有最新的数据
+      if (data.results.length) {
+        // 如果长度大于0，则表示有数据
+        this.articles = data.results // 将历史数据全部都覆盖掉
+        // 假如之前已经将上拉加载finished设置成true
+        // 表示还要继续往下拉，需要把原来的状态再次打开
+        this.finished = false
+        // 注意：我们依然要获取此次的历史时间戳
+        this.timestamp = data.pre_timestamp // 赋值给历史时间戳 因为当你下拉刷新之后，再上拉加载的时候，要用到历史时间戳
+        this.refreshSuccessText = `更新了${data.results.length}条数据`
+      } else {
+        // 没有数据的更新，什么都不需要变化
+        this.refreshSuccessText = '已是最新数据'
+      }
     }
   }
 }
