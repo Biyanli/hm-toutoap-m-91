@@ -57,6 +57,7 @@ export default {
   methods: {
     //   上拉加载方法
     async onLoad () {
+      await this.$sleep() // 等待sleep resolve
       // setTimeout(() => {
       //   // 给数据设置一个上限 不超过50条
       //   if (this.articles.length < 50) {
@@ -89,6 +90,7 @@ export default {
     },
     // 下拉刷新方法
     async onRefresh () {
+      await this.$sleep() // 等待sleep resolve
       // console.log('下拉刷新加载')
       // setTimeout(() => {
       //   let arr = Array.from(Array(10), (value, index) => '追加' + (index + 1))
