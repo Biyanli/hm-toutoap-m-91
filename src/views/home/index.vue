@@ -13,7 +13,7 @@
     <!-- 放置弹层 -->
     <van-popup v-model="showMoreAction" :style="{width:'80%'}">
       <!-- 包裹反馈组件 -->
-      <more-action></more-action>
+      <more-action @dislike="dislike"></more-action>
     </van-popup>
   </div>
 </template>
@@ -22,6 +22,8 @@
 import ArticleList from './components/article-list'
 import MoreAction from './components/more-action'
 import { getMyChannels } from '@/api/channels'
+import { disLikeArticle } from '@/api/article'
+import eventBus from '@/utils/eventBus'
 export default {
   name: 'home', // devtools里面可以看到name组件里面的名称
   data () {
@@ -45,7 +47,26 @@ export default {
     // 监听子组件触发的事件 打开弹层
     openMoreAction (artId) {
       this.showMoreAction = true // 打开弹层
-      this.articleId = artId
+      this.articleId = artId // 接收不喜欢的文章id
+    },
+    // 调用不喜欢的文章接口
+    async  dislike () {
+      try {
+        await disLikeArticle({ target: this.articleId })
+        this.$gnotify({
+          type: 'success',
+          message: '操作成功'
+        })
+        // 触发一个事件 发出一个广播 听到广播的文章列表 去删除对应的数据
+        // 文章id 频道id
+        eventBus.$emit('delArticle', this.articleId, this.channels[this.activeIndex].id)
+        this.showMoreAction = false // 关闭弹层
+      } catch (error) {
+        this.$gnotify({
+          type: 'danger',
+          message: '操作失败'
+        })
+      }
     }
   },
   created () {
