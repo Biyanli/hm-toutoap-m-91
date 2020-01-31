@@ -13,7 +13,8 @@
     <!-- 放置弹层 -->
     <van-popup v-model="showMoreAction" :style="{width:'80%'}">
       <!-- 包裹反馈组件 -->
-      <more-action @dislike="dislike"></more-action>
+      <!-- report事件中的第一个参数$event实际上就是MoreAction组件中传出的type -->
+      <more-action @dislike="dislikeOrReport($event,'dislike')" @report="dislikeOrReport($event,'report')"></more-action>
     </van-popup>
   </div>
 </template>
@@ -22,7 +23,7 @@
 import ArticleList from './components/article-list'
 import MoreAction from './components/more-action'
 import { getMyChannels } from '@/api/channels'
-import { disLikeArticle } from '@/api/article'
+import { disLikeArticle, reportArticle } from '@/api/article'
 import eventBus from '@/utils/eventBus'
 export default {
   name: 'home', // devtools里面可以看到name组件里面的名称
@@ -49,10 +50,50 @@ export default {
       this.showMoreAction = true // 打开弹层
       this.articleId = artId // 接收不喜欢的文章id
     },
-    // 调用不喜欢的文章接口
-    async  dislike () {
+    // // 调用不喜欢的文章接口
+    // async  dislike () {
+    //   try {
+    //     await disLikeArticle({ target: this.articleId })
+    //     this.$gnotify({
+    //       type: 'success',
+    //       message: '操作成功'
+    //     })
+    //     // 触发一个事件 发出一个广播 听到广播的文章列表 去删除对应的数据
+    //     // 文章id 频道id
+    //     eventBus.$emit('delArticle', this.articleId, this.channels[this.activeIndex].id)
+    //     this.showMoreAction = false // 关闭弹层
+    //   } catch (error) {
+    //     this.$gnotify({
+    //       type: 'danger',
+    //       message: '操作失败'
+    //     })
+    //   }
+    // },
+    // // 调用举报文章的接口
+    // async  report (type) {
+    //   try {
+    //     await reportArticle({ target: this.articleId, type })
+    //     this.$gnotify({
+    //       type: 'success',
+    //       message: '操作成功'
+    //     })
+    //     // 同理，也要将当前的文章数据删除掉
+    //     eventBus.$emit('delArticle', this.articleId, this.channels[this.activeIndex].id)
+    //     this.showMoreAction = false // 关闭弹层
+    //   } catch (error) {
+    //     this.$gnotify({
+    //       type: 'danger',
+    //       message: '操作失败'
+    //     })
+    //   }
+    // },
+    // 不喜欢或者举报
+    // operatetype 操作类型 dislike / report
+    // params是举报类型参数
+    async dislikeOrReport (params, operatetype) {
       try {
-        await disLikeArticle({ target: this.articleId })
+        operatetype === 'dislike' ? await disLikeArticle({ target: this.articleId })
+          : await reportArticle({ target: this.articleId, type: params })
         this.$gnotify({
           type: 'success',
           message: '操作成功'
