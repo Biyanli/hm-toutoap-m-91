@@ -15,12 +15,15 @@
     <van-popup v-model="showMoreAction" :style="{width:'80%'}">
       <!-- 包裹反馈组件 -->
       <!-- report事件中的第一个参数$event实际上就是MoreAction组件中传出的type -->
-      <more-action @dislike="dislikeOrReport($event,'dislike')" @report="dislikeOrReport($event,'report')"></more-action>
+      <more-action
+        @dislike="dislikeOrReport($event,'dislike')"
+        @report="dislikeOrReport($event,'report')"
+      ></more-action>
     </van-popup>
     <!-- 编辑频道 -->
     <van-action-sheet :round="false" title="编辑频道" v-model="showChannelEdit">
       <!-- 放置频道编辑组件 -->
-      <channel-edit></channel-edit>
+      <channel-edit :channels="channels"></channel-edit>
     </van-action-sheet>
   </div>
 </template>
@@ -45,10 +48,12 @@ export default {
     }
   },
   components: {
-    ArticleList, MoreAction, ChannelEdit
+    ArticleList,
+    MoreAction,
+    ChannelEdit
   },
   methods: {
-    async  getMyChannels () {
+    async getMyChannels () {
       // 获取频道列表数据
       let data = await getMyChannels()
       this.channels = data.channels // 将频道赋值给声明的变量
@@ -100,7 +105,8 @@ export default {
     // params是举报类型参数
     async dislikeOrReport (params, operatetype) {
       try {
-        operatetype === 'dislike' ? await disLikeArticle({ target: this.articleId })
+        operatetype === 'dislike'
+          ? await disLikeArticle({ target: this.articleId })
           : await reportArticle({ target: this.articleId, type: params })
         this.$gnotify({
           type: 'success',
@@ -108,7 +114,11 @@ export default {
         })
         // 触发一个事件 发出一个广播 听到广播的文章列表 去删除对应的数据
         // 文章id 频道id
-        eventBus.$emit('delArticle', this.articleId, this.channels[this.activeIndex].id)
+        eventBus.$emit(
+          'delArticle',
+          this.articleId,
+          this.channels[this.activeIndex].id
+        )
         this.showMoreAction = false // 关闭弹层
       } catch (error) {
         this.$gnotify({

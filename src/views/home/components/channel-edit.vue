@@ -7,10 +7,14 @@
         <van-button v-if="!editing" @click="editing=true" size="mini" type="info" plain>编辑</van-button>
         <van-button v-else @click="editing=false" size="mini" type="danger" plain>完成</van-button>
       </div>
+      <!-- 可选频道 -->
       <van-grid class="van-hairline--left">
-        <van-grid-item v-for="index in 8" :key="index">
-          <span class="f12">频道{{index}}</span>
-          <van-icon class="btn" name="cross"></van-icon>
+        <van-grid-item v-for="(channel,i) in channels" :key="channel.id">
+          <span class="f12">{{channel.name}}</span>
+          <!-- 通过编辑状态来控制叉号图标的显示和隐藏 -->
+          <template v-if="i!=0">
+            <van-icon v-show="editing" class="btn" name="cross"></van-icon>
+          </template>
         </van-grid-item>
       </van-grid>
     </div>
@@ -30,7 +34,14 @@
 export default {
   data () {
     return {
-      editing: false
+      editing: false // 是否正在编辑
+    }
+  },
+  props: {
+    // 接收props数据
+    channels: {
+      type: Array,
+      default: () => [] // eslint要求我们必须用一个函数来声明数组类型 所以用箭头函数
     }
   }
 }
