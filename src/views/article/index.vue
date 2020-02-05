@@ -11,7 +11,8 @@
           <p class="time">{{article.pubdate | relTime}}</p>
         </div>
         <!-- is_followed为true 表示已关注该用户 is_followed表示未关注 -->
-        <van-button round size="small" type="info">{{article.is_followed ? '已关注' : '+ 关注'}}</van-button>
+        <!-- loading表示加载进度 -->
+        <van-button :loading="followLoading" @click="follow" round size="small" type="info">{{article.is_followed ? '已关注' : '+ 关注'}}</van-button>
       </div>
       <!-- v-html 可以渲染html标签 -->
       <div class="content" v-html="article.content">
@@ -27,11 +28,13 @@
 
 <script>
 import { getArticleInfo } from '@/api/article'
+import { followUser, unFollowUser } from '@/api/user'
 export default {
   name: 'articles',
   data () {
     return {
-      article: {} // 专门用来接收文章的数据
+      article: {}, // 专门用来接收文章的数据
+      followLoading: false // 默认是关闭的
     }
   },
   methods: {
@@ -39,6 +42,25 @@ export default {
     async  getArticleInfo () {
       let { articleId } = this.$route.query // 解构查询id
       this.article = await getArticleInfo(articleId) // 查询数据
+    },
+    // 关注或取消关注
+    async follow () {
+      this.followLoading = true // 打开加载状态
+      await this.$sleep() // 强制的延迟几百毫秒
+      try {
+        if (this.article.is_followed) {
+        // 取消关注接口
+          await unFollowUser(this.article.aut_id)
+        } else {
+        // 关注接口
+          await followUser({ target: this.article.aut_id })
+        }
+        this.article.is_followed = !this.article.is_followed
+        this.followLoading = false // 关闭状态
+        this.$gnotify({ type: 'success', message: '操作成功' })
+      } catch (error) {
+        this.$gnotify({ type: 'danger', message: '操作失败' })
+      }
     }
   },
   created () {
