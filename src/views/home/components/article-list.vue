@@ -5,7 +5,8 @@
       <!-- 放置list组件 list组件可以实现上拉加载 -->
       <van-list v-model="upLoading" :finished="finished" finished-text="没有更多了" @load="onLoad">
         <!-- v-for 渲染数据 -->
-        <van-cell v-for="article in articles" :key="article.art_id.toString()">
+        <!-- 点击van-cell 跳转到文章详情 -->
+        <van-cell :to="`/article?articleId=${article.art_id.toString()}`" v-for="article in articles" :key="article.art_id.toString()">
           <div class="article_item">
             <h3 class="van-ellipsis">{{article.title}}</h3>
             <!-- 三图模式 -->
@@ -24,8 +25,8 @@
               <!-- 使用过滤器  表达式 | 过滤器名称 -->
               <span>{{article.pubdate | relTime}}</span>
               <!-- 判断是否显示插件图标 -->
-              <!-- 点击叉号 告诉父组件我要反馈 -->
-              <span class="close" v-if="user.token" @click="$emit('showAction',article.art_id.toString())">
+              <!-- 点击叉号 告诉父组件我要反馈 stop事件修饰符 阻止冒泡-->
+              <span class="close" v-if="user.token" @click.stop="$emit('showAction',article.art_id.toString())">
                 <van-icon name="cross"></van-icon>
               </span>
             </div>
