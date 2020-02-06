@@ -1,5 +1,5 @@
 <template>
-<div class='container'>
+  <div class="container">
     <van-nav-bar fixed :title="article.title" left-arrow @click-left="$router.back()" />
     <div class="detail">
       <h3 class="title">{{article.title}}</h3>
@@ -12,23 +12,42 @@
         </div>
         <!-- is_followed为true 表示已关注该用户 is_followed表示未关注 -->
         <!-- loading表示加载进度 -->
-        <van-button :loading="followLoading" @click="follow" round size="small" type="info">{{article.is_followed ? '已关注' : '+ 关注'}}</van-button>
+        <van-button
+          :loading="followLoading"
+          @click="follow"
+          round
+          size="small"
+          type="info"
+        >{{article.is_followed ? '已关注' : '+ 关注'}}</van-button>
       </div>
       <!-- v-html 可以渲染html标签 -->
-      <div class="content" v-html="article.content">
-      </div>
+      <div class="content" v-html="article.content"></div>
       <div class="zan">
-        <van-button round size="small" :class="{active:article.attitude === 1}" plain icon="like-o">点赞</van-button>
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <van-button round size="small" :class="{active:article.attitude === 0}" plain icon="delete">不喜欢</van-button>
+        <van-button
+          round
+          size="small"
+          :class="{active:article.attitude === 1}"
+          plain
+          icon="like-o"
+        >点赞</van-button>&nbsp;&nbsp;&nbsp;&nbsp;
+        <van-button
+          round
+          size="small"
+          :class="{active:article.attitude === 0}"
+          plain
+          icon="delete"
+        >不喜欢</van-button>
       </div>
+      <!-- 放置评论组件 -->
+      <comment></comment>
     </div>
   </div>
-  </template>
+</template>
 
 <script>
 import { getArticleInfo } from '@/api/article'
 import { followUser, unFollowUser } from '@/api/user'
+import Comment from './components/comment'
 export default {
   name: 'articles',
   data () {
@@ -37,9 +56,12 @@ export default {
       followLoading: false // 默认是关闭的
     }
   },
+  components: {
+    Comment
+  },
   methods: {
     // 获取文章详情
-    async  getArticleInfo () {
+    async getArticleInfo () {
       let { articleId } = this.$route.query // 解构查询id
       this.article = await getArticleInfo(articleId) // 查询数据
     },
@@ -49,10 +71,10 @@ export default {
       await this.$sleep() // 强制的延迟几百毫秒
       try {
         if (this.article.is_followed) {
-        // 取消关注接口
+          // 取消关注接口
           await unFollowUser(this.article.aut_id)
         } else {
-        // 关注接口
+          // 关注接口
           await followUser({ target: this.article.aut_id })
         }
         this.article.is_followed = !this.article.is_followed
@@ -81,20 +103,21 @@ export default {
     font-size: 18px;
     line-height: 2;
   }
-  .zan{
+  .zan {
     text-align: center;
     padding: 10px 0;
-    .active{
-      border-color:red;
+    .active {
+      border-color: red;
       color: red;
     }
   }
   .author {
     padding: 10px 0;
     display: flex;
-    position:sticky;
+    position: sticky;
     background-color: #fff;
-    top:46px;
+    top: 46px;
+    z-index: 2;
     .text {
       flex: 1;
       padding-left: 10px;
@@ -115,11 +138,11 @@ export default {
     overflow: hidden;
     white-space: pre-wrap;
     word-break: break-all;
-    /deep/ img{
-      max-width:100%;
+    /deep/ img {
+      max-width: 100%;
       background: #f9f9f9;
     }
-    /deep/ code{
+    /deep/ code {
       white-space: pre-wrap;
     }
   }
