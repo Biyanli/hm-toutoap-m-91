@@ -22,3 +22,9 @@ export function unFollowUser (target) {
     method: 'delete'
   })
 }
+// 获取用户个人信息
+export function getUserInfo () {
+  return request({
+    url: '/user'
+  })
+}
