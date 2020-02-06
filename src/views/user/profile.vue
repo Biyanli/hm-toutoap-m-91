@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <van-nav-bar left-arrow title="搜索结果" right-text="保存" @click-left="$router.back()"></van-nav-bar>
+    <van-nav-bar left-arrow title="编辑资料" right-text="保存" @click-left="$router.back()"></van-nav-bar>
   </div>
 </template>
 
