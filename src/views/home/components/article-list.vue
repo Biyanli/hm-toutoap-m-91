@@ -21,7 +21,7 @@
             </div>
             <div class="info_box">
               <span>{{article.aut_name}}</span>
-              <span>{{article.comm_count}}</span>
+              <span>{{article.comm_count}}评论</span>
               <!-- 使用过滤器  表达式 | 过滤器名称 -->
               <span>{{article.pubdate | relTime}}</span>
               <!-- 判断是否显示插件图标 -->

@@ -43,3 +43,10 @@ export function getArticleInfo (articleId) {
     url: `/articles/${articleId}`
   })
 }
+// 获取列表或获取评论回复
+export function getComments (params) {
+  return request({
+    url: '/comments',
+    params
+  })
+}
