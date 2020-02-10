@@ -12,7 +12,7 @@
           fit="cover"
           round
           @click="showPhoto = true"
-          src="https://img.yzcdn.cn/vant/cat.jpeg"
+          :src="user.photo"
         />
       </van-cell>
       <!-- 用户昵称 -->
@@ -20,7 +20,7 @@
       <!-- 性别 -->
       <van-cell is-link title="性别" @click="showGender = true" :value="user.gender === 0 ? '男':'女'" />
       <!-- 生日 -->
-      <van-cell is-link title="生日" @click="showBirthday = true" :value="user.birthday" />
+      <van-cell is-link title="生日" @click="showDate" :value="user.birthday" />
     </van-cell-group>
     <!-- 弹层组件 -->
     <van-popup v-model="showPhoto" style="width:80%">
@@ -30,8 +30,8 @@
       <van-cell is-link title="本地相册选择图片"></van-cell>
       <van-cell is-link title="拍照"></van-cell>
     </van-popup>
-    <!-- 弹层昵称 关闭点击弹层 关闭功能 -->
-    <van-popup :close-on-click-overlay ="false" v-model="showName" style="width:80%">
+    <!-- 弹层昵称 关闭点击弹层 关闭功能 round 和:round="true"的效果是一样的 -->
+    <van-popup round :close-on-click-overlay ="false" v-model="showName" style="width:80%">
       <!-- 编辑用户昵称 双向绑定用户的昵称 -->
       <van-field :error-message="nameMsg" v-model.trim="user.name" type="textarea" rows="4"></van-field>
     <!-- 关闭按钮组件 -->
@@ -43,17 +43,22 @@
     <van-popup v-model="showBirthday" position="bottom">
       <!-- 选择出生日期 出生日期应该小于现在时间 -->
       <!-- type 表示当前的日期类型 年月日 -->
+      <!-- v-model 表示当前的时间 取消时讲弹层关闭 -->
       <van-datetime-picker
         v-model="currentDate"
         type="date"
         :min-date="minDate"
         :max-date="maxDate"
+        @cancel="showBirthday = false"
+        @confirm="confirmDate"
       />
     </van-popup>
   </div>
 </template>
 
 <script>
+import dayjs from 'dayjs' // 引入dayjs插件
+import { getUserProfile } from '@/api/user' // 引入获取资料的方法
 export default {
   name: 'profile',
   data () {
@@ -67,9 +72,9 @@ export default {
       showGender: false, // 是否显示性别选择的弹层
       // 定义数据
       user: {
-        name: '张三', // 用户昵称
+        name: '', // 用户昵称
         gender: 1, // 男 0 女 1
-        birthday: '2019-08-08' // 默认生日
+        birthday: '' // 默认生日
       },
       actions: [{ name: '男' }, { name: '女' }],
       nameMsg: '' // 专门用来控制显示的错误信息
@@ -92,7 +97,29 @@ export default {
       // console.log(item) // item就是选择的对象
       this.user.gender = item.name === '男' ? 0 : 1 // 根据判断得到当前的性别
       this.showGender = false // 关闭当前的弹层
+    },
+    // 点击生日时触发
+    showDate () {
+      // 要将字符串 2019-08-08 转化成日期类型
+      this.currentDate = new Date(this.user.birthday) // 将当前用户的生日赋值给绑定当前时间的数据
+      this.showBirthday = true // 显示生日弹层
+    },
+    // 点击生日弹层的确定时 触发的方法
+    confirmDate (date) {
+      // console.log(date)
+      this.user.birthday = dayjs(date).format('YYYY-MM-DD') // 将转化后的结果赋值给user中的生日
+      this.showBirthday = false // 关闭弹层
+    },
+    // 获取用户资料的方法
+    async  getUserProfile () {
+      let data = await getUserProfile()
+      // console.log(data)
+      // 将数据赋值给user
+      this.user = data
     }
+  },
+  created () {
+    this.getUserProfile() // 调用获取用户资料的方法
   }
 }
 </script>
