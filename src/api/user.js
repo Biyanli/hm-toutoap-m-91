@@ -34,3 +34,11 @@ export function getUserProfile () {
     url: '/user/profile' // 获取用户个人资料的接口地址
   })
 }
+// 封装一个编辑用户头像的api
+export function updateImg (data) {
+  return request({
+    url: '/user/photo', // 编辑头像的地址
+    data,
+    method: 'patch' // 设置头像的类型
+  })
+}

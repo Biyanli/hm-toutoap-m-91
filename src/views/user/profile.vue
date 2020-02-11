@@ -27,7 +27,7 @@
       <!-- 内容 -->
       <!-- 1.本地相册选择图片 -->
       <!-- 2.拍照 -->
-      <van-cell is-link title="本地相册选择图片"></van-cell>
+      <van-cell @click="openChangeFile" is-link title="本地相册选择图片"></van-cell>
       <van-cell is-link title="拍照"></van-cell>
     </van-popup>
     <!-- 弹层昵称 关闭点击弹层 关闭功能 round 和:round="true"的效果是一样的 -->
@@ -53,12 +53,15 @@
         @confirm="confirmDate"
       />
     </van-popup>
+    <!-- 设置一个文件上传控件 但是不能让人看到 -->
+    <!-- input:file 当选择文件之后就会触发onchange -->
+    <input @change="upload" ref="myfile" type="file" name="" id="" style="display:none">
   </div>
 </template>
 
 <script>
 import dayjs from 'dayjs' // 引入dayjs插件
-import { getUserProfile } from '@/api/user' // 引入获取资料的方法
+import { getUserProfile, updateImg } from '@/api/user' // 引入获取资料的方法
 export default {
   name: 'profile',
   data () {
@@ -116,6 +119,28 @@ export default {
       // console.log(data)
       // 将数据赋值给user
       this.user = data
+    },
+    // 点击选择图片时触发
+    openChangeFile () {
+      // 上传本地文件
+      // 触发文件上传组件的点击事件
+      // 需要先获取文件上传的dom对象再触发
+      this.$refs.myfile.click() // 触发文件上传组件的方法
+    },
+    // 当选择图片之后就会触发
+    async  upload () {
+      // console.log('选择了图片')
+      // 上传头像 获取选择的图片
+      // console.log(this.$refs.myfile.files[0])
+      // 首先 应该把这个图片上传到服务器
+      // 调用编辑头像的方法
+      let data = new FormData()
+      data.append('photo', this.$refs.myfile.files[0]) // 往Formdata中添加参数
+      let result = await updateImg(data)
+      // console.log(result) // 上传头像成功之后返回的结果
+      // 应该把地址同步设置给当前页面的数据
+      this.user.photo = result.photo // 将上传成功的头像设置给当前头像
+      this.showPhoto = false // 关闭弹层
     }
   },
   created () {
